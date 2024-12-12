@@ -69,4 +69,15 @@ const DeleteFeedback = async (feedbackId) => {
   }
 };
 
-export { GetAllFeedback, CreateFeedback, UpdateFeedback, DeleteFeedback};
+const searchFeedback = async (query) => {
+  try {
+    const response = await axios.get("http://localhost:3001/api/feedback/search", {
+      params: { query },
+    });
+    return response.data; // Kết quả danh mục
+  } catch (error) {
+    console.error("Lỗi khi tìm kiếm:", error.message);
+  }
+};
+
+export { GetAllFeedback, CreateFeedback, UpdateFeedback, DeleteFeedback, searchFeedback};

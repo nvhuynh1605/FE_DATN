@@ -1,8 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { Tag, Table, Button, Modal, Form, Input, Select, notification } from "antd";
+import {
+  Tag,
+  Table,
+  Button,
+  Modal,
+  Form,
+  Input,
+  Select,
+  notification,
+} from "antd";
 import { CiEdit } from "react-icons/ci";
-import { IoLockClosedSharp, IoKeySharp  } from "react-icons/io5";
-import { GetAllUser, UpdateUser, AddUser } from "../../api/ApiUser"; // Assuming these API calls are defined
+import { IoLockClosedSharp, IoKeySharp } from "react-icons/io5";
+import { GetAllUser, UpdateUser, AddUser, searchUser } from "../../api/ApiUser"; // Assuming these API calls are defined
 
 const columns = (showEditModal, showLockConfirm, handleUnlock) => [
   {
@@ -68,6 +77,7 @@ const AUser = () => {
   const [currentRecord, setCurrentRecord] = useState(null);
   const [form] = Form.useForm();
   const [isDeleteConfirmVisible, setIsDeleteConfirmVisible] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -107,17 +117,17 @@ const AUser = () => {
       const values = await form.validateFields();
       if (isEdit && currentRecord) {
         await UpdateUser(currentRecord._id, values);
-        notification.success({ message: "User updated successfully"});
+        notification.success({ message: "User updated successfully" });
       } else {
         await AddUser(values); // Nếu thêm mới
-        notification.success({ message: "User added successfully"});
+        notification.success({ message: "User added successfully" });
       }
       const updatedUsers = await GetAllUser();
       setUser(updatedUsers.reverse());
       setIsModalOpen(false);
       form.resetFields();
     } catch (error) {
-      notification.error({ message: "Failed to save user."});
+      notification.error({ message: "Failed to save user." });
     }
   };
 
@@ -129,12 +139,12 @@ const AUser = () => {
   const handleLock = async () => {
     try {
       await UpdateUser(currentRecord._id, { status: 0 });
-      notification.success({ message: "User locked successfully"});
+      notification.success({ message: "User locked successfully" });
       const updatedUsers = await GetAllUser();
       setUser(updatedUsers.reverse());
       setIsDeleteConfirmVisible(false);
     } catch (error) {
-      notification.error({ message: "Failed to lock user."});
+      notification.error({ message: "Failed to lock user." });
     }
   };
 
@@ -149,6 +159,28 @@ const AUser = () => {
     }
   };
 
+  const handleFetchUser = async (query = "") => {
+    try {
+      if (!query) {
+        const fetchOrder = async () => {
+          const data = await GetAllUser();
+          setUser(data.reverse());
+        };
+        fetchOrder();
+      }
+      const data = await searchUser(query); // Gọi hàm từ file API
+      setUser(data.reverse());
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+  };
+
+  const handleSearch = (e) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+    handleFetchUser(query);
+  };
+
   return (
     <>
       <div className="mb-4 text-2xl font-bold">List users</div>
@@ -158,8 +190,8 @@ const AUser = () => {
             <div>Search</div>
             <Input
               placeholder="Search user"
-              // value={searchQuery}
-              // onChange={handleSearch}
+              value={searchQuery}
+              onChange={handleSearch}
               style={{ marginBottom: 16, width: 300 }}
             />
           </div>
@@ -194,35 +226,50 @@ const AUser = () => {
           <Form.Item
             name="username"
             label="Username"
-            rules={[!isEdit && { required: true, message: "Please enter the username" }]}
+            rules={[
+              !isEdit && {
+                required: true,
+                message: "Please enter the username",
+              },
+            ]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="password"
             label="Password"
-            rules={[!isEdit && { required: true, message: "Please enter the password" }]}
+            rules={[
+              !isEdit && {
+                required: true,
+                message: "Please enter the password",
+              },
+            ]}
           >
-            <Input type="password"/>
+            <Input type="password" />
           </Form.Item>
           <Form.Item
             name="email"
             label="Email"
-            rules={[!isEdit && { required: true, type: "email", message: "Enter a valid email" }]}
+            rules={[
+              !isEdit && {
+                required: true,
+                type: "email",
+                message: "Enter a valid email",
+              },
+            ]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="phoneNum"
             label="Phone Number"
-            rules={[!isEdit && { required: true, message: "Enter the phone number" }]}
+            rules={[
+              !isEdit && { required: true, message: "Enter the phone number" },
+            ]}
           >
             <Input />
           </Form.Item>
-          <Form.Item
-            name="status"
-            label="Status"
-          >
+          <Form.Item name="status" label="Status">
             <Select placeholder="Select a status">
               <Select.Option value={1}>Active</Select.Option>
               <Select.Option value={0}>Draft</Select.Option>
@@ -240,7 +287,10 @@ const AUser = () => {
         okButtonProps={{ danger: true }}
         cancelText="Cancel"
       >
-        <p>Are you sure you want to lock this user? This will change their status to "Draft".</p>
+        <p>
+          Are you sure you want to lock this user? This will change their status
+          to "Draft".
+        </p>
       </Modal>
     </>
   );

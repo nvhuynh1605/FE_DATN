@@ -61,4 +61,16 @@ export const AddUser = async (newUser) => {
   }
 };
 
-export { GetUserById, GetAllUser };
+const searchUser = async (query) => {
+  try {
+    const response = await axios.get("http://localhost:3001/api/user/search", {
+      params: { query },
+    });
+    return response.data; // Kết quả danh mục
+  } catch (error) {
+    console.error("Lỗi khi tìm kiếm:", error.message);
+  }
+};
+
+
+export { GetUserById, GetAllUser, searchUser };

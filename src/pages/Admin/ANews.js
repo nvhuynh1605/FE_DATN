@@ -9,7 +9,7 @@ import {
   message,
   Select,
   Upload,
-  notification
+  notification,
 } from "antd";
 import { CiEdit, CiTrash } from "react-icons/ci";
 import {
@@ -17,6 +17,7 @@ import {
   CreateNews,
   UpdateNews,
   DeleteNews,
+  searchNews,
   //   searchNews,
 } from "../../api/ApiNews";
 import { UploadOutlined } from "@ant-design/icons";
@@ -107,8 +108,8 @@ const ANews = () => {
         const data = await GetAllNews();
         setNewsList(data.reverse());
       } else {
-        // const data = await searchNews(query); // Gọi hàm tìm kiếm
-        // setNewsList(data.reverse());
+        const data = await searchNews(query); // Gọi hàm tìm kiếm
+        setNewsList(data.reverse());
       }
     } catch (error) {
       console.error("Error fetching news:", error);
@@ -148,10 +149,10 @@ const ANews = () => {
         try {
           const userId = localStorage.getItem("userId");
           const formData = new FormData();
-          formData.append("title", values.title)
-          formData.append("user", userId)
-          formData.append("content", values.content)
-          formData.append("status", values.status)
+          formData.append("title", values.title);
+          formData.append("user", userId);
+          formData.append("content", values.content);
+          formData.append("status", values.status);
 
           if (imageFile instanceof File || imageFile instanceof Blob) {
             formData.append("image", imageFile); // Attach the image as binary data
@@ -159,16 +160,16 @@ const ANews = () => {
 
           if (isEdit && currentRecord) {
             await UpdateNews(currentRecord._id, formData);
-            notification.success({message: "News updated successfully"});
+            notification.success({ message: "News updated successfully" });
           } else {
             await CreateNews(formData);
-            notification.success({message: "News created successfully"});
+            notification.success({ message: "News created successfully" });
           }
 
           const updatedNewsList = await GetAllNews();
           setNewsList(updatedNewsList.reverse());
           setIsModalOpen(false);
-          setImageFile(null)
+          setImageFile(null);
           form.resetFields();
         } catch (error) {
           message.error("Failed to save the news");
@@ -207,7 +208,7 @@ const ANews = () => {
       <div className="mb-4 text-2xl font-bold">News Management</div>
       <div className="flex flex-row justify-between items-center">
         <div className="flex flex-row gap-2">
-          {/* <div>
+          <div>
             <div>Search</div>
             <Input
               placeholder="Search news"
@@ -215,7 +216,7 @@ const ANews = () => {
               onChange={handleSearch}
               style={{ marginBottom: 16, width: 300 }}
             />
-          </div> */}
+          </div>
         </div>
         <Button
           type="primary"
@@ -255,7 +256,11 @@ const ANews = () => {
           <Form.Item
             name="image"
             label="Image"
-            rules={!isEdit ? [{ required: true, message: "Please upload an image" }] : []}
+            rules={
+              !isEdit
+                ? [{ required: true, message: "Please upload an image" }]
+                : []
+            }
           >
             <Upload
               listType="picture"

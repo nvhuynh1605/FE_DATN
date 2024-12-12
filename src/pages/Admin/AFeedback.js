@@ -5,6 +5,7 @@ import {
   CreateFeedback,
   UpdateFeedback,
   DeleteFeedback,
+  searchFeedback,
 //   searchFeedback,
 } from "../../api/ApiFeedback";
 
@@ -59,8 +60,8 @@ const AFeedback = () => {
         };
         fetchFeedbacks();
       }
-    //   const data = await searchFeedback(query); // Gọi hàm từ file API
-    //   setFeedbacks(data.reverse());
+      const data = await searchFeedback(query); // Gọi hàm từ file API
+      setFeedbacks(data.reverse());
     } catch (error) {
       console.error("Error fetching feedbacks:", error);
     }
@@ -136,7 +137,7 @@ const AFeedback = () => {
       <div className="mb-4 text-2xl font-bold">Feedback Management</div>
       <div className="flex flex-row justify-between items-center">
         <div className="flex flex-row gap-2">
-          {/* <div>
+          <div>
             <div>Search</div>
             <Input
               placeholder="Search feedback"
@@ -144,7 +145,7 @@ const AFeedback = () => {
               onChange={handleSearch}
               style={{ marginBottom: 16, width: 300 }}
             />
-          </div> */}
+          </div>
         </div>
       </div>
       <Table
