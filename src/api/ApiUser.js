@@ -72,5 +72,4 @@ const searchUser = async (query) => {
   }
 };
 
-
 export { GetUserById, GetAllUser, searchUser };

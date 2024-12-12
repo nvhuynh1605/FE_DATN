@@ -22,7 +22,7 @@ const columns = (showEditModal, showLockConfirm, handleUnlock) => [
         <Button type="link" onClick={() => showEditModal(record)}>
           <CiEdit className="text-lg" />
         </Button>
-        {record?.status === 1 ? (
+        {record?.role !== "superadmin" && (record?.status === 1 ? (
           <Button type="link" danger onClick={() => showLockConfirm(record)}>
             <IoLockClosedSharp className="text-lg" />
           </Button>
@@ -30,7 +30,7 @@ const columns = (showEditModal, showLockConfirm, handleUnlock) => [
           <Button type="link" onClick={() => handleUnlock(record)}>
             <IoKeySharp className="text-lg" />
           </Button>
-        )}
+        ))}
       </>
     ),
   },
@@ -78,6 +78,7 @@ const AUser = () => {
   const [form] = Form.useForm();
   const [isDeleteConfirmVisible, setIsDeleteConfirmVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const role = localStorage.getItem("role");
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -269,6 +270,12 @@ const AUser = () => {
           >
             <Input />
           </Form.Item>
+          {role === "superadmin" && <Form.Item name="role" label="Role">
+            <Select placeholder="Select a role">
+              <Select.Option value={"admin"}>Quản trị viên</Select.Option>
+              <Select.Option value={""}>Người dùng</Select.Option>
+            </Select>
+          </Form.Item>}
           <Form.Item name="status" label="Status">
             <Select placeholder="Select a status">
               <Select.Option value={1}>Active</Select.Option>

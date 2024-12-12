@@ -12,13 +12,14 @@ const LoginForm = ({ onLoginSuccess, onSwitchToRegister  }) => {
       );
 
       // Extract token and userId from the response
-      const { token, userId } = response.data;
+      const { token, userId, role } = response.data;
 
       // Store token and userId in localStorage
       localStorage.setItem("token", token);
       localStorage.setItem("userId", userId);
+      localStorage.setItem("role", role);
 
-      if (response.data.role === 'admin') {
+      if (response.data.role === 'admin' || response.data.role === 'superadmin') {
         window.location.href = '/admin';
       }
 

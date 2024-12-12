@@ -145,6 +145,7 @@ function User() {
   const handleConfirmLogout = () => {
     localStorage.removeItem("userId");
     localStorage.removeItem("token");
+    localStorage.removeItem("role");
     setIsLogin(false);
     setIsLogoutModalVisible(false); // Hide confirmation modal
     navigate("/");
