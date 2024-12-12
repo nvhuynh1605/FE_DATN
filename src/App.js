@@ -1,24 +1,35 @@
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { routes } from "./routes";
+import Layout from "./components/Layout/layout";
+import AdminLayout from "./pages/Admin/AdminLayout";
+import ScrollToTopButton from "./components/ScrollToTop/ScrollToTop";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <div className="bg-[#f5f5f5]">
+        <Routes>
+          {routes.map((route, index) => {
+            const DefaultLayout = route.layout === null ? AdminLayout : Layout;
+            const Page = route.component;
+            return (
+              <Route
+                key={index}
+                path={route.path}
+                element={
+                  <DefaultLayout>
+                    <Page />
+                  </DefaultLayout>
+                }
+              />
+            );
+          })}
+        </Routes>
+      </div>
+      <div>
+        <ScrollToTopButton />
+      </div>
+    </Router>
   );
 }
 
